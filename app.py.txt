@@ -1,0 +1,31 @@
+# app.py
+
+import streamlit as st
+import pickle
+
+# Load the saved model and vectorizer
+model = pickle.load(open('model.pkl', 'rb'))
+vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
+
+# Title of the web app
+st.title("📩 SMS Spam Detector")
+
+# Text input from user
+input_sms = st.text_area("Enter your SMS text here")
+
+# Prediction logic
+if st.button("Predict"):
+    if input_sms.strip() == "":
+        st.warning("Please enter a message.")
+    else:
+        # Vectorize the input
+        transformed_input = vectorizer.transform([input_sms])
+
+        # Make prediction
+        result = model.predict(transformed_input)[0]
+
+        # Show result
+        if result == 1:
+            st.error("🚫 This message is SPAM")
+        else:
+            st.success("✅ This message is NOT spam")
